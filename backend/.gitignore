@@ -1,0 +1,8 @@
+node_modules/
+# Keep environment variables out of version control
+.env
+backend/.env
+backend/node_modules/
+/generated/prisma
+# Generated AI agent/Prisma skill files
+.agents/
