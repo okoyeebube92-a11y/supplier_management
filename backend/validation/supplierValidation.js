@@ -1,21 +1,9 @@
 const EDITABLE_SUPPLIER_FIELDS = ["name", "location", "mobileNumber"];
 const OPTIONAL_STRING_FIELDS = ["location", "mobileNumber"];
-const MAX_SUPPLIER_ID = 2147483647;
+const { validatePositiveIntId } = require("./commonValidation");
 
 // Return structured validation results so controllers can consistently produce 400 responses.
-const validateSupplierId = (rawId) => {
-    if (typeof rawId !== "string" || !/^[1-9]\d*$/.test(rawId)) {
-        return { error: "Supplier ID must be a positive integer." };
-    }
-
-    const id = Number(rawId);
-    // Prisma Int fields map to PostgreSQL signed 32-bit integers.
-    if (!Number.isSafeInteger(id) || id > MAX_SUPPLIER_ID) {
-        return { error: "Supplier ID must be a positive integer." };
-    }
-
-    return { value: id };
-};
+const validateSupplierId = (rawId) => validatePositiveIntId(rawId, "Supplier ID");
 
 const validateSupplierFields = (body, { requireName, requireAtLeastOne }) => {
     if (body === null || typeof body !== "object" || Array.isArray(body)) {

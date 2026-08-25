@@ -23,6 +23,28 @@ const errorHandler = (err, req, res, next) => {
         });
     }
 
+    const domainStatuses = {
+        SUPPLIER_NOT_FOUND: 404,
+        ORDER_NOT_FOUND: 404,
+        ORDER_ITEM_NOT_FOUND: 404,
+        CONSOLIDATION_EXCEEDS_QUANTITY: 400
+    };
+    if (err && domainStatuses[err.code]) {
+        return res.status(domainStatuses[err.code]).json({ error: err.message });
+    }
+
+    if (err && err.code === "P2002") {
+        return res.status(409).json({
+            error: "Order number already exists for this supplier."
+        });
+    }
+
+    if (err && err.code === "P2003") {
+        return res.status(409).json({
+            error: "Operation conflicts with related records."
+        });
+    }
+
     console.error(err);
     return res.status(500).json({
         error: "Internal server error."

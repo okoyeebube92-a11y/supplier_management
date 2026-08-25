@@ -13,9 +13,54 @@ datasource db {
 
 
 model Supplier {
-  id Int @id @default(autoincrement())
-  name String
-  location String?
+  id           Int      @id @default(autoincrement())
+  name         String
+  location     String?
   mobileNumber String?
-  createdAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+  orders       Order[]
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  supplierId  Int
+  orderNumber String
+  orderDate   DateTime
+  currency    String
+  notes       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  supplier    Supplier    @relation(fields: [supplierId], references: [id])
+  items       OrderItem[]
+
+  @@unique([supplierId, orderNumber])
+}
+
+model OrderItem {
+  id                   Int                   @id @default(autoincrement())
+  orderId              Int
+  modelNumber           String
+  description           String?
+  quantity              Int
+  unit                  String
+  unitPrice             Decimal
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  order                 Order                 @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  consolidationRecords ConsolidationRecord[]
+
+  @@index([orderId])
+}
+
+model ConsolidationRecord {
+  id             Int       @id @default(autoincrement())
+  orderItemId    Int
+  quantity       Int
+  location       String
+  consolidatedAt DateTime
+  notes          String?
+  createdAt      DateTime  @default(now())
+  orderItem      OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+
+  @@index([orderItemId])
 }
