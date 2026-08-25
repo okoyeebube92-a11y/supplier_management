@@ -1,10 +1,15 @@
 require("dotenv").config();
 const express = require('express');
+const cors = require("cors");
 const app = express();
 const supplierRoutes = require("./routes/supplierRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const { errorHandler, notFoundHandler } = require("./middleware/errorMiddleware");
 
+// Allow only the standard local Vite origins used to develop this separate frontend.
+app.use(cors({
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"]
+}));
 app.use(express.json());
 
 app.use("/suppliers", supplierRoutes);

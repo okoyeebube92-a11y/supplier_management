@@ -1,0 +1,17 @@
+import { Navigate, Route, Routes } from "react-router-dom";
+import AppLayout from "./components/layout/AppLayout";
+import SupplierDetailPlaceholder from "./pages/SupplierDetailPlaceholder";
+import SuppliersPage from "./pages/SuppliersPage";
+
+export default function App() {
+  return (
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route index element={<Navigate to="/suppliers" replace />} />
+        <Route path="suppliers" element={<SuppliersPage />} />
+        <Route path="suppliers/:supplierId" element={<SupplierDetailPlaceholder />} />
+        <Route path="*" element={<Navigate to="/suppliers" replace />} />
+      </Route>
+    </Routes>
+  );
+}
