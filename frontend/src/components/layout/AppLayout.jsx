@@ -4,7 +4,12 @@ import Sidebar from "./Sidebar";
 
 export default function AppLayout() {
   const location = useLocation();
-  const title = location.pathname.match(/^\/suppliers\/[^/]+$/) ? "Supplier detail" : "Suppliers";
+  let title = "Suppliers";
+  if (location.pathname.match(/^\/suppliers\/[^/]+$/)) {
+    title = "Supplier detail";
+  } else if (location.pathname.match(/^\/orders\/[^/]+$/)) {
+    title = "Order detail";
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">

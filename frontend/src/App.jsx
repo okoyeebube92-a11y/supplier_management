@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AppLayout from "./components/layout/AppLayout";
-import SupplierDetailPlaceholder from "./pages/SupplierDetailPlaceholder";
+import OrderDetailPlaceholder from "./pages/OrderDetailPlaceholder";
+import SupplierDetailPage from "./pages/SupplierDetailPage";
 import SuppliersPage from "./pages/SuppliersPage";
 
 export default function App() {
@@ -9,7 +10,8 @@ export default function App() {
       <Route element={<AppLayout />}>
         <Route index element={<Navigate to="/suppliers" replace />} />
         <Route path="suppliers" element={<SuppliersPage />} />
-        <Route path="suppliers/:supplierId" element={<SupplierDetailPlaceholder />} />
+        <Route path="suppliers/:supplierId" element={<SupplierDetailPage />} />
+        <Route path="orders/:orderId" element={<OrderDetailPlaceholder />} />
         <Route path="*" element={<Navigate to="/suppliers" replace />} />
       </Route>
     </Routes>
