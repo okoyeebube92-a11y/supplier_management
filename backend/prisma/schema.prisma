@@ -16,8 +16,6 @@ model Supplier {
   id Int @id @default(autoincrement())
   name String
   location String?
-  number String?
-  wechatId String?
+  mobileNumber String?
   createdAt DateTime @default(now())
 }
-

@@ -1,5 +1,5 @@
-const EDITABLE_SUPPLIER_FIELDS = ["name", "location", "number", "wechatId"];
-const OPTIONAL_STRING_FIELDS = ["location", "number", "wechatId"];
+const EDITABLE_SUPPLIER_FIELDS = ["name", "location", "mobileNumber"];
+const OPTIONAL_STRING_FIELDS = ["location", "mobileNumber"];
 const MAX_SUPPLIER_ID = 2147483647;
 
 // Return structured validation results so controllers can consistently produce 400 responses.
