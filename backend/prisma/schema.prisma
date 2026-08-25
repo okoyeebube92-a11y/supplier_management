@@ -32,8 +32,22 @@ model Order {
   updatedAt   DateTime    @updatedAt
   supplier    Supplier    @relation(fields: [supplierId], references: [id])
   items       OrderItem[]
+  payments    Payment[]
 
   @@unique([supplierId, orderNumber])
+}
+
+model Payment {
+  id          Int      @id @default(autoincrement())
+  orderId     Int
+  amount      Decimal
+  paymentDate DateTime
+  reference   String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
 }
 
 model OrderItem {

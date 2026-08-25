@@ -50,8 +50,34 @@ const calculateOrderTotal = (items) => items.reduce(
     new Prisma.Decimal(0)
 );
 
+const calculateAmountPaid = (payments) => payments.reduce(
+    (total, payment) => total.add(new Prisma.Decimal(payment.amount)),
+    new Prisma.Decimal(0)
+);
+
+const calculatePaymentSummary = (items, payments) => {
+    const totalAmount = calculateOrderTotal(items);
+    const amountPaid = calculateAmountPaid(payments);
+    const outstandingBalance = totalAmount.sub(amountPaid);
+    let paymentStatus = "PARTIAL";
+    if (amountPaid.isZero()) {
+        paymentStatus = "UNPAID";
+    } else if (amountPaid.equals(totalAmount)) {
+        paymentStatus = "PAID";
+    }
+
+    return {
+        totalAmount: totalAmount.toString(),
+        amountPaid: amountPaid.toString(),
+        outstandingBalance: outstandingBalance.toString(),
+        paymentStatus
+    };
+};
+
 module.exports = {
+    calculateAmountPaid,
     calculateOrderTotal,
+    calculatePaymentSummary,
     deriveItemStatus,
     deriveOrderStatus,
     summarizeItem

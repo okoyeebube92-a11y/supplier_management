@@ -1,7 +1,7 @@
 const prisma = require("../database/prisma");
 const DomainError = require("../errors/domainError");
 const {
-    calculateOrderTotal,
+    calculatePaymentSummary,
     deriveOrderStatus,
     summarizeItem
 } = require("../utils/orderCalculations");
@@ -16,6 +16,20 @@ const itemWithConsolidations = {
         }
     }
 };
+
+const paymentOrder = [
+    { paymentDate: "asc" },
+    { id: "asc" }
+];
+
+const serializePayment = (payment) => ({
+    id: payment.id,
+    amount: payment.amount.toString(),
+    paymentDate: payment.paymentDate,
+    reference: payment.reference,
+    notes: payment.notes,
+    createdAt: payment.createdAt
+});
 
 const createOrder = async (supplierId, orderData) => {
     const supplier = await prisma.supplier.findUnique({
@@ -58,17 +72,21 @@ const getSupplierOrders = async (supplierId) => {
     const orders = await prisma.order.findMany({
         where: { supplierId },
         orderBy: [{ orderDate: "desc" }, { id: "desc" }],
-        include: { items: itemWithConsolidations }
+        include: {
+            items: itemWithConsolidations,
+            payments: { select: { amount: true } }
+        }
     });
 
     return orders.map((order) => {
         const items = order.items.map((item) => summarizeItem(item));
+        const paymentSummary = calculatePaymentSummary(order.items, order.payments);
         return {
             id: order.id,
             orderNumber: order.orderNumber,
             orderDate: order.orderDate,
             currency: order.currency,
-            totalAmount: calculateOrderTotal(order.items).toString(),
+            ...paymentSummary,
             consolidationStatus: deriveOrderStatus(items),
             createdAt: order.createdAt
         };
@@ -85,7 +103,8 @@ const getOrderDetail = async (orderId) => {
             items: {
                 ...itemWithConsolidations,
                 orderBy: { id: "asc" }
-            }
+            },
+            payments: { orderBy: paymentOrder }
         }
     });
     if (!order) {
@@ -93,6 +112,7 @@ const getOrderDetail = async (orderId) => {
     }
 
     const items = order.items.map((item) => summarizeItem(item, true));
+    const paymentSummary = calculatePaymentSummary(order.items, order.payments);
     return {
         id: order.id,
         orderNumber: order.orderNumber,
@@ -101,7 +121,8 @@ const getOrderDetail = async (orderId) => {
         notes: order.notes,
         supplier: order.supplier,
         items,
-        totalAmount: calculateOrderTotal(order.items).toString(),
+        payments: order.payments.map(serializePayment),
+        ...paymentSummary,
         consolidationStatus: deriveOrderStatus(items),
         createdAt: order.createdAt,
         updatedAt: order.updatedAt
