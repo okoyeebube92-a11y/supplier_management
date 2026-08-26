@@ -3,7 +3,10 @@ import { Link } from "react-router-dom";
 import { formatDate, formatRmb } from "../../utils/formatters";
 import OrderStatusBadge from "./OrderStatusBadge";
 
-export default function OrderSummary({ order }) {
+const isZeroDecimal = (value) => typeof value === "string" && /^0+(?:\.0+)?$/.test(value);
+
+export default function OrderSummary({ order, onRecordPayment, recordPaymentButtonRef }) {
+  const fullyPaid = isZeroDecimal(order.outstandingBalance);
   return (
     <>
       <section aria-labelledby="order-number" className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:p-8">
@@ -32,9 +35,23 @@ export default function OrderSummary({ order }) {
       </section>
 
       <section aria-labelledby="order-progress-heading" className="rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-200 px-6 py-4">
-          <h2 id="order-progress-heading" className="font-semibold text-slate-900">Financial and fulfillment summary</h2>
-          <p className="mt-1 text-xs text-slate-500">Payment and consolidation are tracked independently.</p>
+        <div className="flex flex-col justify-between gap-4 border-b border-slate-200 px-6 py-4 sm:flex-row sm:items-center">
+          <div>
+            <h2 id="order-progress-heading" className="font-semibold text-slate-900">Financial and fulfillment summary</h2>
+            <p className="mt-1 text-xs text-slate-500">Payment and consolidation are tracked independently.</p>
+          </div>
+          <div className="text-left sm:text-right">
+            <button
+              ref={recordPaymentButtonRef}
+              type="button"
+              onClick={onRecordPayment}
+              disabled={fullyPaid}
+              className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white outline-none hover:bg-indigo-700 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500"
+            >
+              {fullyPaid ? "Order Paid" : "Record Payment"}
+            </button>
+            {fullyPaid && <p className="mt-1.5 text-xs text-slate-500">No outstanding balance.</p>}
+          </div>
         </div>
         <dl className="grid sm:grid-cols-2 xl:grid-cols-5">
           <div className="border-b border-slate-100 p-5 sm:border-r xl:border-b-0">
