@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AppLayout from "./components/layout/AppLayout";
-import OrderDetailPlaceholder from "./pages/OrderDetailPlaceholder";
+import OrderDetailPage from "./pages/OrderDetailPage";
 import SupplierDetailPage from "./pages/SupplierDetailPage";
 import SuppliersPage from "./pages/SuppliersPage";
 
@@ -11,7 +11,7 @@ export default function App() {
         <Route index element={<Navigate to="/suppliers" replace />} />
         <Route path="suppliers" element={<SuppliersPage />} />
         <Route path="suppliers/:supplierId" element={<SupplierDetailPage />} />
-        <Route path="orders/:orderId" element={<OrderDetailPlaceholder />} />
+        <Route path="orders/:orderId" element={<OrderDetailPage />} />
         <Route path="*" element={<Navigate to="/suppliers" replace />} />
       </Route>
     </Routes>
