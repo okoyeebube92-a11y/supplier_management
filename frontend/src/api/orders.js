@@ -11,3 +11,11 @@ export function createPayment(orderId, paymentData) {
     body: JSON.stringify(paymentData),
   });
 }
+
+export function createConsolidation(orderId, itemId, consolidationData) {
+  return apiRequest(`/orders/${orderId}/items/${itemId}/consolidations`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(consolidationData),
+  });
+}

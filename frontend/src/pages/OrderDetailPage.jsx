@@ -5,6 +5,7 @@ import { OrderDetailFailure, OrderDetailLoading } from "../components/orders/Ord
 import OrderItems from "../components/orders/OrderItems";
 import OrderSummary from "../components/orders/OrderSummary";
 import PaymentHistory from "../components/orders/PaymentHistory";
+import RecordConsolidationDialog from "../components/orders/RecordConsolidationDialog";
 import RecordPaymentDialog from "../components/orders/RecordPaymentDialog";
 
 const validOrderId = (value) => /^[1-9]\d*$/.test(value) && Number.isSafeInteger(Number(value)) && Number(value) <= 2147483647;
@@ -14,6 +15,7 @@ function OrderDetailContent({ orderId }) {
   const [status, setStatus] = useState("loading");
   const [requestVersion, setRequestVersion] = useState(0);
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [consolidationItem, setConsolidationItem] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const recordPaymentButtonRef = useRef(null);
 
@@ -45,6 +47,12 @@ function OrderDetailContent({ orderId }) {
     setRequestVersion((version) => version + 1);
   };
 
+  const consolidationRecorded = () => {
+    setConsolidationItem(null);
+    setSuccessMessage("Consolidation recorded successfully.");
+    setRequestVersion((version) => version + 1);
+  };
+
   return (
     <div className="space-y-7">
       {successMessage && (
@@ -54,7 +62,7 @@ function OrderDetailContent({ orderId }) {
         </div>
       )}
       <OrderSummary order={order} onRecordPayment={() => setPaymentDialogOpen(true)} recordPaymentButtonRef={recordPaymentButtonRef} />
-      <OrderItems items={order.items} />
+      <OrderItems items={order.items} onRecordConsolidation={setConsolidationItem} />
       <PaymentHistory payments={order.payments} />
       {paymentDialogOpen && (
         <RecordPaymentDialog
@@ -62,6 +70,14 @@ function OrderDetailContent({ orderId }) {
           outstandingBalance={order.outstandingBalance}
           onClose={() => setPaymentDialogOpen(false)}
           onSuccess={paymentRecorded}
+        />
+      )}
+      {consolidationItem && (
+        <RecordConsolidationDialog
+          orderId={orderId}
+          item={consolidationItem}
+          onClose={() => setConsolidationItem(null)}
+          onSuccess={consolidationRecorded}
         />
       )}
     </div>

@@ -23,7 +23,9 @@ function ConsolidationHistory({ records, unit }) {
   );
 }
 
-function OrderItemCard({ item }) {
+function OrderItemCard({ item, onRecordConsolidation }) {
+  const fullyConsolidated = item.consolidatedQuantity === item.quantity;
+
   return (
     <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
       <div className="flex flex-col justify-between gap-4 border-b border-slate-200 px-6 py-5 sm:flex-row sm:items-start">
@@ -55,14 +57,27 @@ function OrderItemCard({ item }) {
       </dl>
 
       <section aria-labelledby={`consolidation-history-${item.id}`} className="bg-slate-50/60 px-6 py-5">
-        <h4 id={`consolidation-history-${item.id}`} className="mb-3 text-sm font-semibold text-slate-900">Consolidation history</h4>
+        <div className="mb-3 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+          <h4 id={`consolidation-history-${item.id}`} className="text-sm font-semibold text-slate-900">Consolidation history</h4>
+          <div className="text-left sm:text-right">
+            <button
+              type="button"
+              onClick={() => onRecordConsolidation(item)}
+              disabled={fullyConsolidated}
+              className="rounded-lg bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white outline-none hover:bg-indigo-700 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500"
+            >
+              {fullyConsolidated ? "Consolidation Complete" : "Record Consolidation"}
+            </button>
+            {fullyConsolidated && <p className="mt-1.5 text-xs text-slate-500">All ordered units are consolidated.</p>}
+          </div>
+        </div>
         <ConsolidationHistory records={item.consolidationRecords} unit={item.unit} />
       </section>
     </article>
   );
 }
 
-export default function OrderItems({ items }) {
+export default function OrderItems({ items, onRecordConsolidation }) {
   return (
     <section aria-labelledby="order-items-heading">
       <div className="mb-4">
@@ -70,7 +85,7 @@ export default function OrderItems({ items }) {
         <h2 id="order-items-heading" className="mt-1 text-xl font-semibold text-slate-950">Order items</h2>
       </div>
       <div className="space-y-5">
-        {items.map((item) => <OrderItemCard key={item.id} item={item} />)}
+        {items.map((item) => <OrderItemCard key={item.id} item={item} onRecordConsolidation={onRecordConsolidation} />)}
       </div>
     </section>
   );
