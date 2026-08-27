@@ -4,6 +4,14 @@ export function getOrderById(orderId, { signal } = {}) {
   return apiRequest(`/orders/${orderId}`, { signal });
 }
 
+export function createOrder(supplierId, orderData) {
+  return apiRequest(`/suppliers/${supplierId}/orders`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(orderData),
+  });
+}
+
 export function createPayment(orderId, paymentData) {
   return apiRequest(`/orders/${orderId}/payments`, {
     method: "POST",

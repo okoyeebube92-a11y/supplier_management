@@ -103,9 +103,16 @@ function SupplierDetailContent({ supplierId }) {
       {supplierStatus === "success" && <SupplierInformation supplier={supplier} />}
 
       <section aria-labelledby="supplier-orders-heading">
-        <div className="mb-4">
-          <p className="text-sm font-semibold text-indigo-600">Order history</p>
-          <h2 id="supplier-orders-heading" className="mt-1 text-xl font-semibold text-slate-950">Supplier orders</h2>
+        <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+          <div>
+            <p className="text-sm font-semibold text-indigo-600">Order history</p>
+            <h2 id="supplier-orders-heading" className="mt-1 text-xl font-semibold text-slate-950">Supplier orders</h2>
+          </div>
+          {supplierStatus === "success" && (
+            <Link to={`/suppliers/${supplierId}/orders/new`} className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white outline-none hover:bg-indigo-700 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2">
+              Create Order
+            </Link>
+          )}
         </div>
         {ordersStatus === "loading" && <DetailLoading label="Loading supplier orders" />}
         {ordersStatus === "error" && <DetailError title="We couldn’t load supplier orders" message="Supplier information is available, but the order history could not be loaded." onRetry={retryOrders} />}
