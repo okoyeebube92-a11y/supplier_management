@@ -40,7 +40,9 @@ const errorHandler = (err, req, res, next) => {
         });
     }
 
-    if (err && err.code === "P2003") {
+    const adapterForeignKeyConflict = err?.code === "P2039"
+        && err.meta?.driverAdapterError?.cause?.code === "23001";
+    if (err && (err.code === "P2003" || adapterForeignKeyConflict)) {
         return res.status(409).json({
             error: "Operation conflicts with related records."
         });
