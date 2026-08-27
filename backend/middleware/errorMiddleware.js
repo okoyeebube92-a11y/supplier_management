@@ -28,7 +28,10 @@ const errorHandler = (err, req, res, next) => {
         ORDER_NOT_FOUND: 404,
         ORDER_ITEM_NOT_FOUND: 404,
         CONSOLIDATION_EXCEEDS_QUANTITY: 400,
-        PAYMENT_EXCEEDS_TOTAL: 400
+        PAYMENT_EXCEEDS_TOTAL: 400,
+        ORDER_ITEM_QUANTITY_CONFLICT: 409,
+        ORDER_ITEM_REMOVAL_CONFLICT: 409,
+        ORDER_TOTAL_BELOW_PAID: 409
     };
     if (err && domainStatuses[err.code]) {
         return res.status(domainStatuses[err.code]).json({ error: err.message });

@@ -22,9 +22,10 @@ export default function OrderSummary({ order, onRecordPayment, recordPaymentButt
               </Link>
             </div>
           </div>
-          <Link to={`/suppliers/${order.supplier.id}`} className="inline-flex self-start rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-semibold text-slate-700 outline-none hover:border-indigo-200 hover:text-indigo-600 focus-visible:ring-2 focus-visible:ring-indigo-500">
-            Back to supplier
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link to={`/orders/${order.id}/edit`} className="inline-flex self-start rounded-lg bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white outline-none hover:bg-indigo-700 focus-visible:ring-2 focus-visible:ring-indigo-500">Edit Order</Link>
+            <Link to={`/suppliers/${order.supplier.id}`} className="inline-flex self-start rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-semibold text-slate-700 outline-none hover:border-indigo-200 hover:text-indigo-600 focus-visible:ring-2 focus-visible:ring-indigo-500">Back to supplier</Link>
+          </div>
         </div>
         {order.notes && (
           <div className="mt-6 flex gap-3 rounded-lg border border-slate-100 bg-slate-50 p-4 text-sm leading-6 text-slate-600">

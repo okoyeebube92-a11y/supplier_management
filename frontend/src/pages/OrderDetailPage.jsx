@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { getOrderById } from "../api/orders";
 import { OrderDetailFailure, OrderDetailLoading } from "../components/orders/OrderDetailStates";
 import OrderItems from "../components/orders/OrderItems";
@@ -11,6 +11,7 @@ import RecordPaymentDialog from "../components/orders/RecordPaymentDialog";
 const validOrderId = (value) => /^[1-9]\d*$/.test(value) && Number.isSafeInteger(Number(value)) && Number(value) <= 2147483647;
 
 function OrderDetailContent({ orderId }) {
+  const location = useLocation();
   const [order, setOrder] = useState(null);
   const [status, setStatus] = useState("loading");
   const [requestVersion, setRequestVersion] = useState(0);
@@ -55,6 +56,7 @@ function OrderDetailContent({ orderId }) {
 
   return (
     <div className="space-y-7">
+      {location.state?.successMessage && <p role="status" className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">{location.state.successMessage}</p>}
       {successMessage && (
         <div role="status" className="flex items-center justify-between gap-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
           <span>{successMessage}</span>

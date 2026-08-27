@@ -13,6 +13,12 @@ export default function OrderItemFields({ index, item, errors, canRemove, onChan
         </button>
       </div>
 
+      {typeof item.consolidatedQuantity === "number" && (
+        <p className="mt-3 rounded-lg border border-indigo-100 bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-800">
+          Consolidated: {item.consolidatedQuantity} / {item.quantity || "—"} {item.unit}
+        </p>
+      )}
+
       <div className="mt-4 grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor={fieldId("modelNumber")} className="text-sm font-semibold text-slate-800">Model Number</label>

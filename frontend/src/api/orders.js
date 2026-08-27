@@ -12,6 +12,14 @@ export function createOrder(supplierId, orderData) {
   });
 }
 
+export function updateOrder(orderId, orderData) {
+  return apiRequest(`/orders/${orderId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(orderData),
+  });
+}
+
 export function createPayment(orderId, paymentData) {
   return apiRequest(`/orders/${orderId}/payments`, {
     method: "POST",

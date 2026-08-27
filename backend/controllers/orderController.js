@@ -1,10 +1,11 @@
 const {
     createOrder,
     getOrderDetail,
-    getSupplierOrders
+    getSupplierOrders,
+    updateOrder
 } = require("../services/orderService");
 const { validateSupplierId } = require("../validation/supplierValidation");
-const { validateOrderBody, validateOrderId } = require("../validation/orderValidation");
+const { validateOrderBody, validateOrderId, validateOrderUpdateBody } = require("../validation/orderValidation");
 
 const createOrderController = async (req, res, next) => {
     const idValidation = validateSupplierId(req.params.supplierId);
@@ -54,8 +55,21 @@ const getOrderDetailController = async (req, res, next) => {
     }
 };
 
+const updateOrderController = async (req, res, next) => {
+    const idValidation = validateOrderId(req.params.orderId);
+    if (idValidation.error) return res.status(400).json({ error: idValidation.error });
+    const bodyValidation = validateOrderUpdateBody(req.body);
+    if (bodyValidation.errors) return res.status(400).json({ error: "Invalid order data.", details: bodyValidation.errors });
+    try {
+        return res.status(200).json(await updateOrder(idValidation.value, bodyValidation.value));
+    } catch (error) {
+        return next(error);
+    }
+};
+
 module.exports = {
     createOrderController,
     getOrderDetailController,
-    getSupplierOrdersController
+    getSupplierOrdersController,
+    updateOrderController
 };

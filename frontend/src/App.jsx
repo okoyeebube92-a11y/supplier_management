@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AppLayout from "./components/layout/AppLayout";
 import OrderDetailPage from "./pages/OrderDetailPage";
+import EditOrderPage from "./pages/EditOrderPage";
 import CreateOrderPage from "./pages/CreateOrderPage";
 import SupplierDetailPage from "./pages/SupplierDetailPage";
 import CreateSupplierPage from "./pages/CreateSupplierPage";
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="suppliers/:supplierId/edit" element={<EditSupplierPage />} />
         <Route path="suppliers/:supplierId/orders/new" element={<CreateOrderPage />} />
         <Route path="orders/:orderId" element={<OrderDetailPage />} />
+        <Route path="orders/:orderId/edit" element={<EditOrderPage />} />
         <Route path="*" element={<Navigate to="/suppliers" replace />} />
       </Route>
     </Routes>

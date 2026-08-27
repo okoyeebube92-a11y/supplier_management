@@ -1,5 +1,5 @@
 const express = require("express");
-const { getOrderDetailController } = require("../controllers/orderController");
+const { getOrderDetailController, updateOrderController } = require("../controllers/orderController");
 const { createConsolidationController } = require("../controllers/consolidationController");
 const {
     createPaymentController,
@@ -9,6 +9,7 @@ const {
 const router = express.Router();
 
 router.get("/:orderId", getOrderDetailController);
+router.patch("/:orderId", updateOrderController);
 router.post("/:orderId/payments", createPaymentController);
 router.get("/:orderId/payments", getOrderPaymentsController);
 router.post("/:orderId/items/:itemId/consolidations", createConsolidationController);

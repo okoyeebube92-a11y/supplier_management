@@ -2,6 +2,8 @@ const { MAX_PRISMA_INT, validatePositiveIntId } = require("./commonValidation");
 
 const ORDER_FIELDS = ["orderNumber", "orderDate", "currency", "notes", "items"];
 const ITEM_FIELDS = ["modelNumber", "description", "quantity", "unit", "unitPrice"];
+const EDIT_ORDER_FIELDS = ["orderNumber", "orderDate", "notes", "items"];
+const EDIT_ITEM_FIELDS = ["id", ...ITEM_FIELDS];
 
 const validateNonBlankString = (value, label, errors) => {
     if (typeof value !== "string" || value.trim().length === 0) {
@@ -133,9 +135,58 @@ const validateOrderBody = (body) => {
     return { value };
 };
 
+const validateOrderUpdateBody = (body) => {
+    if (body === null || typeof body !== "object" || Array.isArray(body)) {
+        return { errors: ["Request body must be a JSON object."] };
+    }
+    const errors = Object.keys(body)
+        .filter((field) => !EDIT_ORDER_FIELDS.includes(field))
+        .map((field) => `Unknown field: ${field}.`);
+    const orderNumber = validateNonBlankString(body.orderNumber, "orderNumber", errors);
+    const orderDate = validateDate(body.orderDate, "orderDate", errors);
+    const notes = validateOptionalString(body, "notes", "notes", errors);
+    const items = [];
+    const seenIds = new Set();
+    if (!Array.isArray(body.items) || body.items.length === 0) {
+        errors.push("items must contain at least one order item.");
+    } else {
+        body.items.forEach((item, index) => {
+            const label = `items[${index}]`;
+            if (item === null || typeof item !== "object" || Array.isArray(item)) {
+                errors.push(`${label} must be a JSON object.`);
+                return;
+            }
+            Object.keys(item).filter((field) => !EDIT_ITEM_FIELDS.includes(field))
+                .forEach((field) => errors.push(`Unknown field: ${label}.${field}.`));
+            let id;
+            if (Object.prototype.hasOwnProperty.call(item, "id")) {
+                if (!Number.isInteger(item.id) || item.id <= 0 || item.id > MAX_PRISMA_INT) {
+                    errors.push(`${label}.id must be a positive integer.`);
+                } else if (seenIds.has(item.id)) {
+                    errors.push(`Duplicate existing item ID: ${item.id}.`);
+                } else {
+                    id = item.id;
+                    seenIds.add(id);
+                }
+            }
+            const modelNumber = validateNonBlankString(item.modelNumber, `${label}.modelNumber`, errors);
+            const unit = validateNonBlankString(item.unit, `${label}.unit`, errors);
+            const description = validateOptionalString(item, "description", `${label}.description`, errors);
+            const unitPrice = validateUnitPrice(item.unitPrice, `${label}.unitPrice`, errors);
+            if (!Number.isInteger(item.quantity) || item.quantity <= 0 || item.quantity > MAX_PRISMA_INT) {
+                errors.push(`${label}.quantity must be a positive integer.`);
+            }
+            items.push({ id, modelNumber, description, quantity: item.quantity, unit, unitPrice });
+        });
+    }
+    if (errors.length > 0) return { errors };
+    return { value: { orderNumber, orderDate, notes, items } };
+};
+
 const validateOrderId = (rawId) => validatePositiveIntId(rawId, "Order ID");
 
 module.exports = {
     validateOrderBody,
-    validateOrderId
+    validateOrderId,
+    validateOrderUpdateBody
 };
