@@ -4,6 +4,7 @@ const cors = require("cors");
 const app = express();
 const supplierRoutes = require("./routes/supplierRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 const { errorHandler, notFoundHandler } = require("./middleware/errorMiddleware");
 
 // Allow only the standard local Vite origins used to develop this separate frontend.
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use("/suppliers", supplierRoutes);
 app.use("/orders", orderRoutes);
+app.use("/dashboard", dashboardRoutes);
 
 app.get('/', (req, res) => {
     res.json({ message: "Supplier API is working" });
